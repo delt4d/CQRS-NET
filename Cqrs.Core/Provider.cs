@@ -4,6 +4,6 @@ namespace Cqrs.Core;
 
 public sealed class CqrsProvider
 {
-    internal readonly ConcurrentDictionary<Type, object> CommandHandlers = new();
-    internal readonly ConcurrentDictionary<Type, object> QueryHandlers = new();
+    internal readonly ConcurrentDictionary<Type, Type> CommandHandlers = new();
+    internal readonly ConcurrentDictionary<Type, Type> QueryHandlers = new();
 }

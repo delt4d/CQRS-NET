@@ -7,7 +7,7 @@ public sealed class CqrsRegister
     public void RegisterCommandHandler(Type commandType, Type handlerType)
     {
         EnsureCommandHandlerIsAssignableToInterface(handlerType, typeof(ICommandHandler<>).MakeGenericType(commandType), commandType.Name); // ICommandHandler<TCommand>
-        _provider.CommandHandlers[commandType] = CreateInstance(handlerType);
+        _provider.CommandHandlers[commandType] = handlerType;
     }
 
     public void RegisterQueryHandler(Type queryType, Type handlerType)
@@ -16,7 +16,7 @@ public sealed class CqrsRegister
         var resultType = queryInterfaceType.GetGenericArguments().ElementAt(0); // IQuery<TResult>
         var handlerInterface = typeof(IQueryHandler<,>).MakeGenericType(queryType, resultType); // IQueryHandler<in TQuery, out TResult>
         EnsureQueryHandlerIsAssignableToInterface(handlerType, handlerInterface, queryType.Name, resultType.Name);
-        _provider.QueryHandlers[queryType] = CreateInstance(handlerType);
+        _provider.QueryHandlers[queryType] = handlerType;
     }
 
     public CqrsProvider GetProvider() => _provider;
@@ -44,12 +44,5 @@ public sealed class CqrsRegister
     {
         if (!interfaceType.IsAssignableFrom(handlerType))
             throw new ArgumentException($"{handlerType.Name} does not implement ICommandHandler<{commandName}>");
-    }
-
-    private static object CreateInstance(Type objType)
-    {
-        return 
-            Activator.CreateInstance(objType) ?? 
-            throw new InvalidOperationException($"Failed to create instance of {objType.Name}");
     }
 }
