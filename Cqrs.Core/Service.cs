@@ -1,20 +1,49 @@
 ﻿namespace Cqrs.Core;
 
-public class CqrsService : ICqrsService
+public class CqrsService(
+    CqrsProvider provider, 
+    ICqrsInstanceProvider instanceProvider) : ICqrsService
 {
+    public CqrsService(CqrsProvider provider) : 
+        this(provider, new ActivatorCqrsInstanceProvider())
+    {
+    }
+    
     public Task Handle(ICommand command)
     {
-        throw new NotImplementedException();
+        if (!provider.TryGetCommandHandler(command.GetType(), out var handler))
+            throw new InvalidOperationException($"No command handler registered for {command.GetType().Name}");
+
+        var instance = instanceProvider.GetInstance(handler);
+        var method = typeof(ICommandHandler<>)
+            .MakeGenericType(command.GetType())
+            .GetMethod("Handle")!;
+
+        var result = method.Invoke(instance, [command])
+                     ?? throw new InvalidOperationException($"Command handler returned null for {command.GetType().Name}");
+
+        return (Task)result;
     }
 
-    public TResult Handler<TResult>(IQuery<TResult> query)
+    public TResult Handle<TResult>(IQuery<TResult> query)
     {
-        throw new NotImplementedException();
+        if (!provider.TryGetQueryHandler(query.GetType(), out var handler)) 
+            throw new InvalidOperationException($"No query handler registered for {query.GetType().Name}");
+
+        var instance = instanceProvider.GetInstance(handler);
+        var method = typeof(IQueryHandler<,>)
+            .MakeGenericType(query.GetType())
+            .GetMethod("Handler")!;
+
+        var result = method.Invoke(instance, [query])
+                     ?? throw new InvalidOperationException($"Query handler returned null for {query.GetType().Name}");
+
+        return (TResult)result;
     }
 }
 
 public interface ICqrsService
 {
     public Task Handle(ICommand command);
-    public TResult Handler<TResult>(IQuery<TResult> query);
+    public TResult Handle<TResult>(IQuery<TResult> query);
 }
