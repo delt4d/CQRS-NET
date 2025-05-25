@@ -10,7 +10,7 @@ namespace Cqrs.Console;
 
 class Program
 {
-    private static readonly UserService UserService = new ();
+    private static readonly IUserService UserService = new UserService();
     
     static async Task Main(string[] args)
     {
