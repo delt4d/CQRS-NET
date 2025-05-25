@@ -3,7 +3,7 @@
 
 <br/>
 
-#### Create Commands, Queries and Handlers
+#### Create Commands, Queries and Handlers.
 
 Command and CommandHandler example:
 ```csharp
