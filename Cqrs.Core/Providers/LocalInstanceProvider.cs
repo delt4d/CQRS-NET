@@ -12,14 +12,10 @@ public class LocalInstanceProvider : IInstanceProvider
         if (_instances.TryGetValue(handlerType, out var instance))
             return instance;
 
-        if (!_factories.TryGetValue(handlerType, out var factory))
-            throw new InvalidOperationException($"No instance or factory registered for type {handlerType.FullName}");
-        
-        var created = factory();
-        _instances[handlerType] = created; 
-        
-        return created;
+        if (_factories.TryGetValue(handlerType, out var factory))
+            return factory.Invoke();
 
+        throw new InvalidOperationException($"No instance or factory registered for type {handlerType.FullName}");
     }
     
     public void RegisterInstance<T>(T instance)
