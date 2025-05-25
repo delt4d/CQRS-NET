@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Cqrs.Core;
+namespace Cqrs.Core.RegisterResolver;
 
 public sealed class CqrsCommandQueryResolver
 {

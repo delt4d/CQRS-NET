@@ -1,10 +1,10 @@
-﻿using Cqrs.Core;
+﻿using Cqrs.Core.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cqrs.DependencyInjection;
 
-public class CqrsDependencyInjectionInstanceProvider(IServiceProvider services) 
-    : ICqrsInstanceProvider
+public class DependencyInjectionInstanceProvider(IServiceProvider services) 
+    : IInstanceProvider
 {
     public object GetInstance(Type handlerType)
     {

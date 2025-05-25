@@ -1,17 +1,8 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Cqrs.Core;
+namespace Cqrs.Core.Providers;
 
-public class ActivatorCqrsInstanceProvider : ICqrsInstanceProvider
-{
-    public object GetInstance(Type handlerType)
-    {
-        return Activator.CreateInstance(handlerType) ?? 
-               throw new InvalidOperationException($"Failed to create instance of {handlerType.Name}");
-    }
-}
-
-public class LocalCqrsInstanceProvider : ICqrsInstanceProvider
+public class LocalInstanceProvider : IInstanceProvider
 {
     private readonly ConcurrentDictionary<Type, object> _instances = new();
     private readonly ConcurrentDictionary<Type, Func<object>> _factories = new();
@@ -46,9 +37,4 @@ public class LocalCqrsInstanceProvider : ICqrsInstanceProvider
     {
         _factories[typeof(T)] = () => factory() ?? throw new InvalidOperationException($"Factory for type {typeof(T).FullName} returned null.");
     }
-}
-
-public interface ICqrsInstanceProvider
-{
-    public object GetInstance(Type handlerType);
 }

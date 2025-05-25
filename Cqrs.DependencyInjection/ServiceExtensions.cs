@@ -1,4 +1,5 @@
 ﻿using Cqrs.Core;
+using Cqrs.Core.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cqrs.DependencyInjection;
@@ -10,14 +11,14 @@ public static class ServiceExtensions
         var options = new CqrsOptions();
         configure(options);
         
-        services.AddSingleton<ICqrsInstanceProvider>(sp => 
+        services.AddSingleton<IInstanceProvider>(sp => 
             options.InstanceProvider ?? 
-            new CqrsDependencyInjectionInstanceProvider(sp));
+            new DependencyInjectionInstanceProvider(sp));
         
         services.AddTransient<ICqrsService>(sp =>
             new CqrsService(
                 options.Register.GetCommandQueryResolver(), 
-                sp.GetRequiredService<ICqrsInstanceProvider>()));
+                sp.GetRequiredService<IInstanceProvider>()));
         
         return services;
     }

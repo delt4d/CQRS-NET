@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using Cqrs.Core;
+using Cqrs.Core.Providers;
+using Cqrs.Core.RegisterResolver;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cqrs.DependencyInjection;
@@ -9,7 +11,7 @@ public class CqrsOptions
     internal List<Assembly> Assemblies { get; } = [];
     internal CqrsRegister Register { get; } = new();
 
-    internal ICqrsInstanceProvider? InstanceProvider { get; private set; }
+    internal IInstanceProvider? InstanceProvider { get; private set; }
 
     internal void RegisterHandlers(IServiceCollection services)
     {
@@ -17,7 +19,7 @@ public class CqrsOptions
             RegisterFromAssembly(services, assembly);
     }
     
-    public CqrsOptions SetInstanceProvider(ICqrsInstanceProvider instanceProvider)
+    public CqrsOptions SetInstanceProvider(IInstanceProvider instanceProvider)
     {
         InstanceProvider = instanceProvider;
         return this;

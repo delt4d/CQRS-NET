@@ -1,6 +1,9 @@
-﻿namespace Cqrs.Core;
+﻿using Cqrs.Core.Providers;
+using Cqrs.Core.RegisterResolver;
 
-public class CqrsService(CqrsCommandQueryResolver commandQueryResolver, ICqrsInstanceProvider instanceProvider) 
+namespace Cqrs.Core;
+
+public class CqrsService(CqrsCommandQueryResolver commandQueryResolver, IInstanceProvider instanceProvider) 
     : ICqrsService
 {
     public Task Handle(ICommand command)

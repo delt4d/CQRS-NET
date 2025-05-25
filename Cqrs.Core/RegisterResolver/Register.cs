@@ -1,4 +1,6 @@
-﻿namespace Cqrs.Core;
+﻿using Cqrs.Core;
+
+namespace Cqrs.Core.RegisterResolver;
 
 public sealed class CqrsRegister
 {
