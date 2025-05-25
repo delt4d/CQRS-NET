@@ -31,6 +31,8 @@ public class GetAllUsersConnectedQueryHandler(IChatService chatService, IUserSer
 }
 ```
 
+<br/>
+
 #### Manual CQRS service configuration.
 
 Example of CqrsService configuration:
@@ -68,6 +70,8 @@ await container.Handle(new SendMessageCommandHandler(...));
 await container.Handle(new GetAllUsersConnectedQueryHandler(...));
 await container.Handle(new GetMessagesHistoryQueryHandler(...));
 ```
+
+<br/>
 
 #### Dependency Injection.
 
