@@ -11,8 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Cqrs.Core\Cqrs.Core.csproj" />
-      <ProjectReference Include="..\Cqrs.DependencyInjection\Cqrs.DependencyInjection.csproj" />
+      <ProjectReference Include="..\..\Cqrs.Core\Cqrs.Core.csproj" />
+      <ProjectReference Include="..\..\Cqrs.DependencyInjection\Cqrs.DependencyInjection.csproj" />
       <ProjectReference Include="..\Cqrs.Shared\Cqrs.Shared.csproj" />
     </ItemGroup>
 

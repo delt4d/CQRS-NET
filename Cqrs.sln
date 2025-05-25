@@ -4,11 +4,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.Core", "Cqrs.Core\Cqrs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.DependencyInjection", "Cqrs.DependencyInjection\Cqrs.DependencyInjection.csproj", "{FC5FF9DE-B3C9-4E4F-9458-3189DB9DF1C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.Api", "Cqrs.Api\Cqrs.Api.csproj", "{AF063A74-4058-491C-8E94-76A2C44980A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.Api", "Cqrs.Preview\Cqrs.Api\Cqrs.Api.csproj", "{AF063A74-4058-491C-8E94-76A2C44980A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.Console", "Cqrs.Console\Cqrs.Console.csproj", "{79725D5A-0B0B-4C18-9666-6E3AFFF65DA8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.Console", "Cqrs.Preview\Cqrs.Console\Cqrs.Console.csproj", "{79725D5A-0B0B-4C18-9666-6E3AFFF65DA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.Shared", "Cqrs.Shared\Cqrs.Shared.csproj", "{B6A3A7F5-A82E-4280-9877-2AA6CEA98016}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.Shared", "Cqrs.Preview\Cqrs.Shared\Cqrs.Shared.csproj", "{B6A3A7F5-A82E-4280-9877-2AA6CEA98016}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
