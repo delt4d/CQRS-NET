@@ -12,13 +12,15 @@ public static class ServiceExtensions
         configure(options);
         
         services.AddSingleton<IInstanceProvider>(sp => 
-            options.InstanceProvider ?? 
+            options.GetInstanceProvider?.Invoke(sp) ?? 
             new DependencyInjectionInstanceProvider(sp));
         
         services.AddTransient<ICqrsService>(sp =>
             new CqrsService(
                 options.Register.GetCommandQueryResolver(), 
                 sp.GetRequiredService<IInstanceProvider>()));
+
+        options.RegisterHandlers(services);
         
         return services;
     }

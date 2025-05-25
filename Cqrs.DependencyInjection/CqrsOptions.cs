@@ -11,7 +11,7 @@ public class CqrsOptions
     internal List<Assembly> Assemblies { get; } = [];
     internal CqrsRegister Register { get; } = new();
 
-    internal IInstanceProvider? InstanceProvider { get; private set; }
+    internal Func<IServiceProvider, IInstanceProvider>? GetInstanceProvider { get; private set; }
 
     internal void RegisterHandlers(IServiceCollection services)
     {
@@ -19,9 +19,9 @@ public class CqrsOptions
             RegisterFromAssembly(services, assembly);
     }
     
-    public CqrsOptions SetInstanceProvider(IInstanceProvider instanceProvider)
+    public CqrsOptions SetInstanceProvider(Func<IServiceProvider, IInstanceProvider> configure)
     {
-        InstanceProvider = instanceProvider;
+        GetInstanceProvider = configure;
         return this;
     }
 
