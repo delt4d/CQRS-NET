@@ -3,7 +3,7 @@
 
 <br/>
 
-### Create Commands, Queries and Handlers
+#### Create Commands, Queries and Handlers
 
 Command and CommandHandler example:
 ```csharp
@@ -31,7 +31,7 @@ public class GetAllUsersConnectedQueryHandler(IChatService chatService, IUserSer
 }
 ```
 
-### Manual CQRS service configuration.
+#### Manual CQRS service configuration.
 
 Example of CqrsService configuration:
 ```csharp
@@ -69,7 +69,7 @@ await container.Handle(new GetAllUsersConnectedQueryHandler(...));
 await container.Handle(new GetMessagesHistoryQueryHandler(...));
 ```
 
-### Dependency Injection.
+#### Dependency Injection.
 
 Configure CQRS service:
 ```csharp
