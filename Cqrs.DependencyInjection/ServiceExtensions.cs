@@ -17,7 +17,7 @@ public static class ServiceExtensions
         
         services.AddTransient<ICqrsService>(sp =>
             new CqrsService(
-                options.Register.GetCommandQueryResolver(), 
+                options.Register.BuildCommandQueryResolver(), 
                 sp.GetRequiredService<IInstanceProvider>()));
 
         options.RegisterHandlers(services);
