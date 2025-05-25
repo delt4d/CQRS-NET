@@ -58,6 +58,7 @@ public class UserService : IUserService
 public interface IUserService
 {
     public Task<User> GetById(string id, CancellationToken? cancellationToken);
+    public Task<User> GetByName(string name, CancellationToken? cancellationToken);
     public Task Save(User user, CancellationToken? cancellationToken);
     public Task Update(User user, CancellationToken? cancellationToken);
     public Task Delete(string userId, CancellationToken? cancellationToken);

@@ -4,7 +4,7 @@ namespace Cqrs.Shared.Commands;
 
 public record DeleteUserCommand(string UserId) : ICommand;
 
-public class DeleteUserCommandHandler(UserService userService) : ICommandHandler<DeleteUserCommand>
+public class DeleteUserCommandHandler(IUserService userService) : ICommandHandler<DeleteUserCommand>
 {
     public Task Handle(DeleteUserCommand command, CancellationToken? cancellationToken)
     {

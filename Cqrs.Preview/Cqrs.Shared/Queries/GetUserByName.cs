@@ -5,7 +5,7 @@ namespace Cqrs.Shared.Queries;
 
 public record GetUserByNameQuery(string Name) : IQuery<Task<User>>;
 
-public class GetUserByNameQueryHandler(UserService userService) : IQueryHandler<GetUserByNameQuery, Task<User>>
+public class GetUserByNameQueryHandler(IUserService userService) : IQueryHandler<GetUserByNameQuery, Task<User>>
 {
     public Task<User> Handle(GetUserByNameQuery command, CancellationToken? cancellationToken)
     {
