@@ -12,6 +12,11 @@ public sealed class CqrsRegister
         _commandQueryResolver.CommandHandlers[commandType] = handlerType;
     }
 
+    public void RegisterCommand<TCommand, TCommandHandler>()
+    {
+        RegisterCommand(typeof(TCommand), typeof(TCommandHandler));
+    }
+
     public void RegisterQuery(Type queryType, Type handlerType)
     {
         var queryInterfaceType = GetQueryInterfaceTypeFromQueryType(queryType);
@@ -19,6 +24,11 @@ public sealed class CqrsRegister
         var handlerInterface = typeof(IQueryHandler<,>).MakeGenericType(queryType, resultType); // IQueryHandler<in TQuery, out TResult>
         EnsureQueryHandlerIsAssignableToInterface(handlerType, handlerInterface, queryType.Name, resultType.Name);
         _commandQueryResolver.QueryHandlers[queryType] = handlerType;
+    }
+
+    public void RegisterQuery<TQuery, TQueryHandler>()
+    {
+        RegisterQuery(typeof(TQuery), typeof(TQueryHandler));
     }
 
     public CqrsCommandQueryResolver GetCommandQueryResolver() => _commandQueryResolver;
