@@ -31,7 +31,7 @@ public sealed class CqrsRegister
         RegisterQuery(typeof(TQuery), typeof(TQueryHandler));
     }
 
-    public CqrsCommandQueryResolver GetCommandQueryResolver() => _commandQueryResolver;
+    public CqrsCommandQueryResolver BuildCommandQueryResolver() => _commandQueryResolver;
 
     private static Type GetQueryInterfaceTypeFromQueryType(Type queryType)
     {

@@ -17,20 +17,44 @@ public class LocalInstanceProvider : IInstanceProvider
 
         throw new InvalidOperationException($"No instance or factory registered for type {handlerType.FullName}");
     }
-    
-    public void RegisterInstance<T>(T instance)
+
+    public void RegisterInstance<T>(T instance) where T : class
     {
         ArgumentNullException.ThrowIfNull(instance);
+        EnsureIsHandler<T>();
         _instances[typeof(T)] = instance;
     }
 
-    public void RegisterType<T>() where T : class, new()
+    public void RegisterInstance<T>() where T : class, new()
     {
-        _factories[typeof(T)] = () => new T();
+        EnsureIsHandler<T>();
+        _instances[typeof(T)] = new T();
     }
 
     public void RegisterFactory<T>(Func<T> factory) where T : class
     {
+        EnsureIsHandler<T>();
         _factories[typeof(T)] = () => factory() ?? throw new InvalidOperationException($"Factory for type {typeof(T).FullName} returned null.");
+    }
+    
+    public void RegisterFactory<T>() where T : class, new()
+    {
+        EnsureIsHandler<T>();
+        _factories[typeof(T)] = () => new T();
+    }
+    
+    private static void EnsureIsHandler<T>()  where T : class
+    {
+        var genericType = typeof(T);
+
+        if (!genericType.GetInterfaces()
+                .Any(interfaceType => interfaceType.IsGenericType && 
+                                      IsHandlerDefinition(interfaceType.GetGenericTypeDefinition())))
+            throw new InvalidOperationException($"{genericType.FullName} is not a command handler nor a query handler.");
+    }
+
+    private static bool IsHandlerDefinition(Type definition)
+    {
+        return definition == typeof(ICommandHandler<>) || definition == typeof(IQueryHandler<,>);
     }
 }

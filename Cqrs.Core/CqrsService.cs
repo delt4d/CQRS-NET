@@ -6,42 +6,45 @@ namespace Cqrs.Core;
 public class CqrsService(CqrsCommandQueryResolver commandQueryResolver, IInstanceProvider instanceProvider) 
     : ICqrsService
 {
-    public Task Handle(ICommand command)
+    public Task Handle(ICommand command, CancellationToken? cancellationToken = null)
     {
         var commandType = command.GetType();
         
-        if (!commandQueryResolver.TryGetCommandHandler(commandType, out var handler))
+        if (!commandQueryResolver.TryGetCommandHandler(commandType, out var genericHandlerType))
             throw new InvalidOperationException($"No command handler registered for {commandType.Name}");
 
-        var instance = instanceProvider.GetInstance(handler);
-        var method = typeof(ICommandHandler<>)
-            .MakeGenericType(commandType)
-            .GetMethod("Handle")!;
-
-        var result = method.Invoke(instance, [command])
-                     ?? throw new InvalidOperationException($"Command handler returned null for {command.GetType().Name}");
-
-        return (Task)result;
+        var instance = instanceProvider.GetInstance(genericHandlerType);
+        
+        // Use dynamic dispatch to avoid reflection and preserve original exceptions
+        return ((dynamic)instance).Handle((dynamic)command, cancellationToken);
     }
 
-    public TResult Handle<TResult>(IQuery<TResult> query)
+    public TResult Handle<TResult>(IQuery<TResult> query, CancellationToken? cancellationToken = null)
     {
         var queryType = query.GetType();
         
-        if (!commandQueryResolver.TryGetQueryHandler(queryType, out var handler)) 
+        if (!commandQueryResolver.TryGetQueryHandler(queryType, out var genericHandlerType)) 
             throw new InvalidOperationException($"No query handler registered for {queryType.Name}");
         
         var queryInterfaceType = GetQueryInterfaceTypeFromQueryType(queryType);
         var resultType = queryInterfaceType.GetGenericArguments().ElementAt(0); // IQuery<TResult>
-        var instance = instanceProvider.GetInstance(handler);
-        var method = typeof(IQueryHandler<,>)
-            .MakeGenericType(queryType, resultType)
-            .GetMethod("Handle")!;
+        var instance = instanceProvider.GetInstance(genericHandlerType);
+        
+        // Use dynamic dispatch to avoid reflection and preserve original exceptions
+        var result = ((dynamic)instance).Handle((dynamic)query, cancellationToken);
+        
+        if (result is not null) 
+            return (TResult)result;
+        
+        if (CanTypeBeNull(typeof(TResult)))
+            return default!;
+        
+        throw new InvalidOperationException($"Handler returned null for non-nullable result type {typeof(TResult)}");
+    }
 
-        var result = method.Invoke(instance, [query])
-                     ?? throw new InvalidOperationException($"Query handler returned null for {query.GetType().Name}");
-
-        return (TResult)result;
+    private static bool CanTypeBeNull(Type type)
+    {
+        return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
     }
     
     private static Type GetQueryInterfaceTypeFromQueryType(Type queryType)
@@ -60,6 +63,6 @@ public class CqrsService(CqrsCommandQueryResolver commandQueryResolver, IInstanc
 
 public interface ICqrsService
 {
-    public Task Handle(ICommand command);
-    public TResult Handle<TResult>(IQuery<TResult> query);
+    public Task Handle(ICommand command, CancellationToken? cancellationToken = null);
+    public TResult Handle<TResult>(IQuery<TResult> query, CancellationToken? cancellationToken = null);
 }

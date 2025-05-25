@@ -7,5 +7,5 @@ public interface ICommand
 public interface ICommandHandler<in TCommand>
     where TCommand : ICommand
 {
-    public Task Handle(TCommand command);
+    public Task Handle(TCommand command, CancellationToken? cancellation);
 }
