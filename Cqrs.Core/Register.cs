@@ -2,24 +2,24 @@
 
 public sealed class CqrsRegister
 {
-    private readonly CqrsProvider _provider = new();
+    private readonly CqrsCommandQueryResolver _commandQueryResolver = new();
     
-    public void RegisterCommandHandler(Type commandType, Type handlerType)
+    public void RegisterCommand(Type commandType, Type handlerType)
     {
         EnsureCommandHandlerIsAssignableToInterface(handlerType, typeof(ICommandHandler<>).MakeGenericType(commandType), commandType.Name); // ICommandHandler<TCommand>
-        _provider.CommandHandlers[commandType] = handlerType;
+        _commandQueryResolver.CommandHandlers[commandType] = handlerType;
     }
 
-    public void RegisterQueryHandler(Type queryType, Type handlerType)
+    public void RegisterQuery(Type queryType, Type handlerType)
     {
         var queryInterfaceType = GetQueryInterfaceTypeFromQueryType(queryType);
         var resultType = queryInterfaceType.GetGenericArguments().ElementAt(0); // IQuery<TResult>
         var handlerInterface = typeof(IQueryHandler<,>).MakeGenericType(queryType, resultType); // IQueryHandler<in TQuery, out TResult>
         EnsureQueryHandlerIsAssignableToInterface(handlerType, handlerInterface, queryType.Name, resultType.Name);
-        _provider.QueryHandlers[queryType] = handlerType;
+        _commandQueryResolver.QueryHandlers[queryType] = handlerType;
     }
 
-    public CqrsProvider GetProvider() => _provider;
+    public CqrsCommandQueryResolver GetCommandQueryResolver() => _commandQueryResolver;
 
     private static Type GetQueryInterfaceTypeFromQueryType(Type queryType)
     {
@@ -34,13 +34,15 @@ public sealed class CqrsRegister
         return interfaceType;
     }
 
-    private static void EnsureQueryHandlerIsAssignableToInterface(Type handlerType, Type interfaceType, string queryName, string resultName)
+    private static void EnsureQueryHandlerIsAssignableToInterface(
+        Type handlerType, Type interfaceType, string queryName, string resultName)
     {
         if (!interfaceType.IsAssignableFrom(handlerType))
             throw new ArgumentException($"{handlerType.Name} does not implement IQueryHandler<{queryName}, {resultName}>");
     }
 
-    private static void EnsureCommandHandlerIsAssignableToInterface(Type handlerType, Type interfaceType, string commandName)
+    private static void EnsureCommandHandlerIsAssignableToInterface(
+        Type handlerType, Type interfaceType, string commandName)
     {
         if (!interfaceType.IsAssignableFrom(handlerType))
             throw new ArgumentException($"{handlerType.Name} does not implement ICommandHandler<{commandName}>");

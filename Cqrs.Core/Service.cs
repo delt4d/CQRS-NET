@@ -1,17 +1,11 @@
 ﻿namespace Cqrs.Core;
 
-public class CqrsService(
-    CqrsProvider provider, 
-    ICqrsInstanceProvider instanceProvider) : ICqrsService
+public class CqrsService(CqrsCommandQueryResolver commandQueryResolver, ICqrsInstanceProvider instanceProvider) 
+    : ICqrsService
 {
-    public CqrsService(CqrsProvider provider) : 
-        this(provider, new ActivatorCqrsInstanceProvider())
-    {
-    }
-    
     public Task Handle(ICommand command)
     {
-        if (!provider.TryGetCommandHandler(command.GetType(), out var handler))
+        if (!commandQueryResolver.TryGetCommandHandler(command.GetType(), out var handler))
             throw new InvalidOperationException($"No command handler registered for {command.GetType().Name}");
 
         var instance = instanceProvider.GetInstance(handler);
@@ -27,7 +21,7 @@ public class CqrsService(
 
     public TResult Handle<TResult>(IQuery<TResult> query)
     {
-        if (!provider.TryGetQueryHandler(query.GetType(), out var handler)) 
+        if (!commandQueryResolver.TryGetQueryHandler(query.GetType(), out var handler)) 
             throw new InvalidOperationException($"No query handler registered for {query.GetType().Name}");
 
         var instance = instanceProvider.GetInstance(handler);

@@ -1,22 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Concurrent;
 
 namespace Cqrs.Core;
-
-public sealed class CqrsProvider
-{
-    internal readonly Dictionary<Type, Type> CommandHandlers = new();
-    internal readonly Dictionary<Type, Type> QueryHandlers = new();
-
-    public bool TryGetCommandHandler(
-        Type command, 
-        [NotNullWhen(true)] out Type? commandHandler) =>
-        CommandHandlers.TryGetValue(command, out commandHandler);
-
-    public bool TryGetQueryHandler(
-        Type query, 
-        [NotNullWhen(true)] out Type? queryHandler) => 
-        QueryHandlers.TryGetValue(query, out queryHandler);
-}
 
 public class ActivatorCqrsInstanceProvider : ICqrsInstanceProvider
 {
@@ -27,23 +11,40 @@ public class ActivatorCqrsInstanceProvider : ICqrsInstanceProvider
     }
 }
 
-public class TeacherCqrsInstanceProvider : ICqrsInstanceProvider
+public class LocalCqrsInstanceProvider : ICqrsInstanceProvider
 {
-    private readonly ActivatorCqrsInstanceProvider _activatorInstanceProvider = new();
-    private readonly Dictionary<Type, Func<object?>> _instanceCreator = [];
-    
+    private readonly ConcurrentDictionary<Type, object> _instances = new();
+    private readonly ConcurrentDictionary<Type, Func<object>> _factories = new();
+
     public object GetInstance(Type handlerType)
     {
-        if (!_instanceCreator.TryGetValue(handlerType, out var teacher))
-            throw new ArgumentNullException($"The handler {handlerType.Name} wasn't teach on how to instantiate.");
+        if (_instances.TryGetValue(handlerType, out var instance))
+            return instance;
 
-        return teacher.Invoke() ?? 
-               _activatorInstanceProvider.GetInstance(handlerType);
+        if (!_factories.TryGetValue(handlerType, out var factory))
+            throw new InvalidOperationException($"No instance or factory registered for type {handlerType.FullName}");
+        
+        var created = factory();
+        _instances[handlerType] = created; 
+        
+        return created;
+
+    }
+    
+    public void RegisterInstance<T>(T instance)
+    {
+        ArgumentNullException.ThrowIfNull(instance);
+        _instances[typeof(T)] = instance;
     }
 
-    public void Teach<T>(Func<T> teacher)
+    public void RegisterType<T>() where T : class, new()
     {
-        _instanceCreator[typeof(T)] = (teacher as Func<object?>)!;
+        _factories[typeof(T)] = () => new T();
+    }
+
+    public void RegisterFactory<T>(Func<T> factory) where T : class
+    {
+        _factories[typeof(T)] = () => factory() ?? throw new InvalidOperationException($"Factory for type {typeof(T).FullName} returned null.");
     }
 }
 
