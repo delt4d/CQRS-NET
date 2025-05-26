@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.Preview\Cqrs.Console",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.Preview\Cqrs.Shared", "Cqrs.Preview\Cqrs.Shared\Cqrs.Shared.csproj", "{B6A3A7F5-A82E-4280-9877-2AA6CEA98016}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cqrs.Test", "Cqrs.Test\Cqrs.Test.csproj", "{F5F7ED55-5911-43BE-BA51-277724750657}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{B6A3A7F5-A82E-4280-9877-2AA6CEA98016}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6A3A7F5-A82E-4280-9877-2AA6CEA98016}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6A3A7F5-A82E-4280-9877-2AA6CEA98016}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5F7ED55-5911-43BE-BA51-277724750657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5F7ED55-5911-43BE-BA51-277724750657}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5F7ED55-5911-43BE-BA51-277724750657}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5F7ED55-5911-43BE-BA51-277724750657}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

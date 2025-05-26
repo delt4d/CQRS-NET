@@ -50,7 +50,7 @@ public class LocalInstanceProvider : IInstanceProvider
         if (!genericType.GetInterfaces()
                 .Any(interfaceType => interfaceType.IsGenericType && 
                                       IsHandlerDefinition(interfaceType.GetGenericTypeDefinition())))
-            throw new InvalidOperationException($"{genericType.FullName} is not a command handler nor a query handler.");
+            throw new InvalidOperationException($"{genericType.FullName} it's not a command handler nor a query handler.");
     }
 
     private static bool IsHandlerDefinition(Type definition)

@@ -31,7 +31,7 @@ class Program
 
             /*
              * ActivatorInstanceProvider is an alternative that uses
-             * System.Activator to create a instance of the class
+             * System.Activator to create an instance of the class
              * var instanceProvider = new ActivatorInstanceProvider();
              */
             var instanceProvider = new LocalInstanceProvider();
