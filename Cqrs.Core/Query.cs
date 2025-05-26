@@ -4,8 +4,8 @@ public interface IQuery<TResult>
 {
 }
 
-public interface IQueryHandler<in TQuery, out TResult>
+public interface IQueryHandler<in TQuery, TResult>
     where TQuery : IQuery<TResult>
 {
-    public TResult Handle(TQuery query, CancellationToken? cancellationToken);
+    public Task<TResult> Handle(TQuery query, CancellationToken? cancellationToken);
 }
