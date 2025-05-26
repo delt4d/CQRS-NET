@@ -1,3 +1,5 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/delt4d/CQRS-NET)
+
 # CQRS-NET
 ### Implementation of Command Query Responsibility Segregation Pattern in C#.
 
