@@ -1,7 +1,9 @@
-﻿namespace Cqrs.Test.Providers;
+﻿using Cqrs.Test.Commands;
+
+namespace Cqrs.Test.Providers;
 
 [TestFixture]
-public class LocalInstanceProviderTest()
+public class LocalInstanceProviderTests()
 {
     private LocalInstanceProvider _provider;
 
@@ -14,10 +16,10 @@ public class LocalInstanceProviderTest()
     [Test]
     public void RegisterInstance_WithValidHandler_ShouldBeRetrievable()
     {
-        var handler = new SampleCommandHandler();
+        var handler = new SampleParameterlessCommandHandler();
         _provider.RegisterInstance(handler);
 
-        var instance = _provider.GetInstance(typeof(SampleCommandHandler));
+        var instance = _provider.GetInstance(typeof(SampleParameterlessCommandHandler));
 
         Assert.That(instance, Is.SameAs(handler));
     }
@@ -25,14 +27,14 @@ public class LocalInstanceProviderTest()
     [Test]
     public void RegisterInstance_WithNewHandler_ShouldCreateAndReturnInstance()
     {
-        _provider.RegisterInstance<SampleCommandHandler>();
+        _provider.RegisterInstance<SampleParameterlessCommandHandler>();
 
-        var instance1 = _provider.GetInstance(typeof(SampleCommandHandler));
-        var instance2 = _provider.GetInstance(typeof(SampleCommandHandler));
+        var instance1 = _provider.GetInstance(typeof(SampleParameterlessCommandHandler));
+        var instance2 = _provider.GetInstance(typeof(SampleParameterlessCommandHandler));
 
         Assert.Multiple(() =>
         {
-            Assert.That(instance1, Is.TypeOf<SampleCommandHandler>());
+            Assert.That(instance1, Is.TypeOf<SampleParameterlessCommandHandler>());
             Assert.That(instance2, Is.SameAs(instance1));
         });
     }
@@ -44,20 +46,20 @@ public class LocalInstanceProviderTest()
         _provider.RegisterFactory(() =>
         {
             ++count;
-            return new SampleCommandHandler();
+            return new SampleParameterlessCommandHandler();
         });
 
-        var instance1 = _provider.GetInstance(typeof(SampleCommandHandler));
+        var instance1 = _provider.GetInstance(typeof(SampleParameterlessCommandHandler));
         Assert.Multiple(() =>
         {
-            Assert.That(instance1, Is.TypeOf<SampleCommandHandler>());
+            Assert.That(instance1, Is.TypeOf<SampleParameterlessCommandHandler>());
             Assert.That(count, Is.EqualTo(1));
         });
 
-        var instance2 = _provider.GetInstance(typeof(SampleCommandHandler));
+        var instance2 = _provider.GetInstance(typeof(SampleParameterlessCommandHandler));
         Assert.Multiple(() =>
         {
-            Assert.That(instance2, Is.TypeOf<SampleCommandHandler>());
+            Assert.That(instance2, Is.TypeOf<SampleParameterlessCommandHandler>());
             Assert.That(instance2, Is.Not.SameAs(instance1));
             Assert.That(count, Is.EqualTo(2));
         });
@@ -66,15 +68,15 @@ public class LocalInstanceProviderTest()
     [Test]
     public void RegisterFactory_Generic_ShouldCreateInstance()
     {
-        _provider.RegisterFactory<SampleCommandHandler>();
+        _provider.RegisterFactory<SampleParameterlessCommandHandler>();
 
-        var instance1 = _provider.GetInstance(typeof(SampleCommandHandler));
-        var instance2 = _provider.GetInstance(typeof(SampleCommandHandler));
+        var instance1 = _provider.GetInstance(typeof(SampleParameterlessCommandHandler));
+        var instance2 = _provider.GetInstance(typeof(SampleParameterlessCommandHandler));
 
         Assert.Multiple(() =>
         {
-            Assert.That(instance1, Is.TypeOf<SampleCommandHandler>());
-            Assert.That(instance2, Is.TypeOf<SampleCommandHandler>());
+            Assert.That(instance1, Is.TypeOf<SampleParameterlessCommandHandler>());
+            Assert.That(instance2, Is.TypeOf<SampleParameterlessCommandHandler>());
             Assert.That(instance2, Is.Not.SameAs(instance1));
         });
     }
@@ -83,7 +85,7 @@ public class LocalInstanceProviderTest()
     public void GetInstance_UnregisteredType_ShouldThrow()
     {
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            _provider.GetInstance(typeof(SampleCommandHandler))
+            _provider.GetInstance(typeof(SampleParameterlessCommandHandler))
         );
         Assert.That(ex.Message, Does.Contain("No instance or factory registered"));
     }
@@ -91,7 +93,7 @@ public class LocalInstanceProviderTest()
     [Test]
     public void RegisterInstance_WithNull_ShouldThrow()
     {
-        SampleCommandHandler? handler = null;
+        SampleParameterlessCommandHandler? handler = null;
 
         var ex = Assert.Throws<ArgumentNullException>(() =>
             _provider.RegisterInstance(handler!)
@@ -104,7 +106,7 @@ public class LocalInstanceProviderTest()
     public void RegisterInstance_NotAHandler_ShouldThrow()
     {
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            _provider.RegisterInstance(new NotAHandler())
+            _provider.RegisterInstance(new NotCommandHandler())
         );
 
         Assert.That(ex.Message, Does.Contain("it's not a command handler nor a query handler"));
@@ -113,32 +115,12 @@ public class LocalInstanceProviderTest()
     [Test]
     public void RegisterFactory_FuncReturnsNull_ShouldThrowOnGet()
     {
-        _provider.RegisterFactory<SampleCommandHandler>(() => null!);
+        _provider.RegisterFactory<SampleParameterlessCommandHandler>(() => null!);
 
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            _provider.GetInstance(typeof(SampleCommandHandler))
+            _provider.GetInstance(typeof(SampleParameterlessCommandHandler))
         );
 
         Assert.That(ex.Message, Does.Contain("returned null"));
-    }
-
-    private class SampleCommand : ICommand
-    {
-    }
-
-    private class SampleCommandHandler : ICommandHandler<SampleCommand>
-    {
-        public Task Handle(SampleCommand command, CancellationToken? cancellation)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    private class NotAHandler
-    {
-        public Task Handle(SampleCommand command, CancellationToken? cancellation)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
