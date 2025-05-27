@@ -1,4 +1,4 @@
-﻿namespace Cqrs.Test.Utils.Commands;
+﻿namespace Cqrs.Tests.Utils.Commands;
 
 public class SampleParameterlessCommand : ICommand
 {

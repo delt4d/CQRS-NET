@@ -1,5 +1,5 @@
-﻿using Cqrs.Test.Utils.Commands;
-using Cqrs.Test.Utils.Queries;
+﻿using Cqrs.Tests.Utils.Commands;
+using Cqrs.Tests.Utils.Queries;
 
 namespace Cqrs.Test.RegisterResolver;
 

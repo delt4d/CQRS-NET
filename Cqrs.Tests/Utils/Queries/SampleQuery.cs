@@ -1,7 +1,7 @@
-﻿using Cqrs.Test.Utils.Models;
-using Cqrs.Test.Utils.Services;
+﻿using Cqrs.Tests.Utils.Models;
+using Cqrs.Tests.Utils.Services;
 
-namespace Cqrs.Test.Utils.Queries;
+namespace Cqrs.Tests.Utils.Queries;
 
 public class SampleQuery : IQuery<SampleModel>
 {

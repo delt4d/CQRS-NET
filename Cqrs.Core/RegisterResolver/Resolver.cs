@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Cqrs.Test")]
+[assembly: InternalsVisibleTo("Cqrs.Tests")]
 
 namespace Cqrs.Core.RegisterResolver;
 

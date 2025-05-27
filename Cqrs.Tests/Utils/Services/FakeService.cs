@@ -1,4 +1,4 @@
-﻿namespace Cqrs.Test.Utils.Services;
+﻿namespace Cqrs.Tests.Utils.Services;
 
 public class FakeService : IFakeService
 {

@@ -1,6 +1,6 @@
-﻿using Cqrs.Test.Utils.Models;
+﻿using Cqrs.Tests.Utils.Models;
 
-namespace Cqrs.Test.Utils.Queries;
+namespace Cqrs.Tests.Utils.Queries;
 
 public class SampleParameterlessQuery : IQuery<SampleModel>
 {

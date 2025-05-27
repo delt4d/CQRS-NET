@@ -1,4 +1,4 @@
-﻿namespace Cqrs.Test.Utils.Queries;
+﻿namespace Cqrs.Tests.Utils.Queries;
 
 public class NotQuery
 {
