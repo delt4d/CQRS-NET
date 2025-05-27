@@ -1,4 +1,4 @@
-﻿namespace Cqrs.Tests.RegisterResolver;
+﻿namespace Cqrs.Tests.Core.RegisterResolver;
 
 [TestFixture]
 public class ResolverTests

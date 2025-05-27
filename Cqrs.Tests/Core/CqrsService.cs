@@ -4,7 +4,7 @@ using Cqrs.Tests.Utils.Providers;
 using Cqrs.Tests.Utils.Queries;
 using Cqrs.Tests.Utils.Services;
 
-namespace Cqrs.Tests;
+namespace Cqrs.Tests.Core;
 
 [TestFixture]
 public class CqrsServiceTests
@@ -76,5 +76,37 @@ public class CqrsServiceTests
         _instanceProvider.Register(new NullReturningQueryHandler());
 
         Assert.ThatAsync(() => _service.Handle(query), Is.Null);
+    }
+
+    [Test]
+    public void Handle_Command_WithRegisteredInterfaceHandler_ShouldReturnExpectedResult()
+    {
+        _register.RegisterCommand<InterfaceCommand, IInterfaceCommandHandler>();
+        _register.RegisterQuery<InterfaceQuery, IInterfaceQueryHandler>();
+        _instanceProvider.Register<IInterfaceCommandHandler>(new InterfaceCommandHandler());
+        _instanceProvider.Register<IInterfaceQueryHandler>(new InterfaceQueryHandler());
+        
+        Assert.Multiple(() =>
+        {
+            Assert.DoesNotThrowAsync(() => _service.Handle(new InterfaceCommand()));
+            Assert.DoesNotThrowAsync(() => _service.Handle(new InterfaceQuery()));
+        });
+    }
+    
+    [Test]
+    public void Handle_Command_WithUnregisteredInterfaceHandler_ShouldThrow()
+    {
+        _register.RegisterCommand<InterfaceCommand, IInterfaceCommandHandler>();
+        _register.RegisterQuery<InterfaceQuery, IInterfaceQueryHandler>();
+        _instanceProvider.Register(new InterfaceCommandHandler());
+        _instanceProvider.Register(new InterfaceQueryHandler());
+        
+        Assert.Multiple(() =>
+        {
+            var ex1 = Assert.ThrowsAsync<InvalidOperationException>(() => _service.Handle(new InterfaceCommand()));
+            var ex2 = Assert.ThrowsAsync<InvalidOperationException>(() => _service.Handle(new InterfaceQuery()));
+            Assert.That(ex1.Message, Does.Contain("No instance registered for"));
+            Assert.That(ex2.Message, Does.Contain("No instance registered for"));
+        });
     }
 }

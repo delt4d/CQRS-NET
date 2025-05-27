@@ -1,6 +1,6 @@
 ﻿using Cqrs.Tests.Utils.Commands;
 
-namespace Cqrs.Tests.Providers;
+namespace Cqrs.Tests.Core.Providers;
 
 [TestFixture]
 public class ActivatorInstanceProviderTests
@@ -27,6 +27,16 @@ public class ActivatorInstanceProviderTests
             _provider.GetInstance(typeof(SampleCommandHandler))
         );
         Assert.That(ex.Message, Does.Contain("Cannot dynamically create an instance of type"));
+    }
+    
+    [Test]
+    public void GetInstance_WithAbstractReference_ShouldThrow()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => 
+            _provider.GetInstance(typeof(IInterfaceCommandHandler))
+        );
+
+        Assert.That(ex.Message, Does.Contain("Cannot create an instance of abstract class or interface"));
     }
 
     [Test]

@@ -1,7 +1,7 @@
 ﻿using Cqrs.Tests.Utils.Commands;
 using Cqrs.Tests.Utils.Queries;
 
-namespace Cqrs.Tests.RegisterResolver;
+namespace Cqrs.Tests.Core.RegisterResolver;
 
 [TestFixture]
 public class RegisterTests
@@ -42,6 +42,20 @@ public class RegisterTests
     }
 
     [Test]
+    public void RegisterCommand_WithAbstractCommandHandler_ShouldRegisterSuccessfully()
+    {
+        _register.RegisterCommand<InterfaceCommand, IInterfaceCommandHandler>();
+
+        var resolver = _register.BuildCommandQueryResolver();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(resolver.CommandHandlers.ContainsKey(typeof(InterfaceCommand)), Is.True);
+            Assert.That(resolver.CommandHandlers[typeof(InterfaceCommand)], Is.EqualTo(typeof(IInterfaceCommandHandler)));
+        });
+    }
+
+    [Test]
     public void RegisterQuery_WithValidHandler_ShouldRegisterSuccessfully()
     {
         _register.RegisterQuery<SampleQuery, SampleQueryHandler>();
@@ -76,5 +90,19 @@ public class RegisterTests
         );
 
         Assert.That(ex.Message, Does.Contain("does not implement IQuery<TResult>"));
+    }
+    
+    [Test]
+    public void RegisterQuery_WithAbstractCommandHandler_ShouldRegisterSuccessfully()
+    {
+        _register.RegisterQuery<InterfaceQuery, IInterfaceQueryHandler>();
+
+        var resolver = _register.BuildCommandQueryResolver();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(resolver.QueryHandlers.ContainsKey(typeof(InterfaceQuery)), Is.True);
+            Assert.That(resolver.QueryHandlers[typeof(InterfaceQuery)], Is.EqualTo(typeof(IInterfaceQueryHandler)));
+        });
     }
 }

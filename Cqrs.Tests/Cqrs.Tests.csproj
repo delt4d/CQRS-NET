@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Cqrs.Core\Cqrs.Core.csproj" />
+      <ProjectReference Include="..\Cqrs.DependencyInjection\Cqrs.DependencyInjection.csproj" />
     </ItemGroup>
 
 </Project>

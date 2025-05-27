@@ -1,6 +1,6 @@
 ﻿using Cqrs.Tests.Utils.Commands;
 
-namespace Cqrs.Tests.Providers;
+namespace Cqrs.Tests.Core.Providers;
 
 [TestFixture]
 public class LocalInstanceProviderTests()
@@ -82,15 +82,6 @@ public class LocalInstanceProviderTests()
     }
 
     [Test]
-    public void GetInstance_UnregisteredType_ShouldThrow()
-    {
-        var ex = Assert.Throws<InvalidOperationException>(() =>
-            _provider.GetInstance(typeof(SampleParameterlessCommandHandler))
-        );
-        Assert.That(ex.Message, Does.Contain("No instance or factory registered"));
-    }
-
-    [Test]
     public void RegisterInstance_WithNull_ShouldThrow()
     {
         SampleParameterlessCommandHandler? handler = null;
@@ -122,5 +113,14 @@ public class LocalInstanceProviderTests()
         );
 
         Assert.That(ex.Message, Does.Contain("returned null"));
+    }
+
+    [Test]
+    public void GetInstance_UnregisteredType_ShouldThrow()
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            _provider.GetInstance(typeof(SampleParameterlessCommandHandler))
+        );
+        Assert.That(ex.Message, Does.Contain("No instance or factory registered"));
     }
 }
