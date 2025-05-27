@@ -1,4 +1,4 @@
-﻿using Cqrs.Test.Commands;
+﻿using Cqrs.Test.Utils.Commands;
 
 namespace Cqrs.Test.Providers;
 

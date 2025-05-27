@@ -1,6 +1,6 @@
-﻿using Cqrs.Test.Services;
+﻿using Cqrs.Test.Utils.Services;
 
-namespace Cqrs.Test.Commands;
+namespace Cqrs.Test.Utils.Commands;
 
 public class SampleCommand : ICommand
 {

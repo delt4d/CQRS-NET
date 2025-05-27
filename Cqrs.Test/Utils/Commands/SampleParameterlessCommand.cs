@@ -1,4 +1,4 @@
-﻿namespace Cqrs.Test.Commands;
+﻿namespace Cqrs.Test.Utils.Commands;
 
 public class SampleParameterlessCommand : ICommand
 {
@@ -8,6 +8,6 @@ public class SampleParameterlessCommandHandler : ICommandHandler<SampleParameter
 {
     public Task Handle(SampleParameterlessCommand parameterlessCommand, CancellationToken? cancellation)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }
