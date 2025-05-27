@@ -2,14 +2,12 @@
 
 namespace Cqrs.Tests.Utils.Queries;
 
-public class SampleParameterlessQuery : IQuery<SampleModel>
-{
-}
+public record SampleParameterlessQuery(SampleModel? Sample = null) : IQuery<SampleModel>;
 
 public class SampleParameterlessQueryHandler : IQueryHandler<SampleParameterlessQuery, SampleModel>
 {
     public Task<SampleModel> Handle(SampleParameterlessQuery query, CancellationToken? cancellationToken)
     {
-        return Task.FromResult(new SampleModel());
+        return Task.FromResult(query.Sample ?? new SampleModel());
     }
 }

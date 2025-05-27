@@ -1,6 +1,6 @@
 ﻿using Cqrs.Tests.Utils.Commands;
 
-namespace Cqrs.Test.Providers;
+namespace Cqrs.Tests.Providers;
 
 [TestFixture]
 public class LocalInstanceProviderTests()

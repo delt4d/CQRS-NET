@@ -1,7 +1,7 @@
 ﻿using Cqrs.Tests.Utils.Commands;
 using Cqrs.Tests.Utils.Queries;
 
-namespace Cqrs.Test.RegisterResolver;
+namespace Cqrs.Tests.RegisterResolver;
 
 [TestFixture]
 public class RegisterTests

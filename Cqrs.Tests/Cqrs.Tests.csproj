@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
-        <RootNamespace>Cqrs.Test</RootNamespace>
+        <RootNamespace>Cqrs.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

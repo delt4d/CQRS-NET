@@ -1,5 +1,6 @@
-﻿namespace Cqrs.Test.RegisterResolver;
+﻿namespace Cqrs.Tests.RegisterResolver;
 
+[TestFixture]
 public class ResolverTests
 {
     private CqrsCommandQueryResolver _resolver;
