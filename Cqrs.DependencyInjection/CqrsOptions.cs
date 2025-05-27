@@ -1,8 +1,11 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using Cqrs.Core;
 using Cqrs.Core.Providers;
 using Cqrs.Core.RegisterResolver;
 using Microsoft.Extensions.DependencyInjection;
+
+[assembly: InternalsVisibleTo("Cqrs.Tests")]
 
 namespace Cqrs.DependencyInjection;
 

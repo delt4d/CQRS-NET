@@ -23,12 +23,21 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=18983c1d_002D0b81_002D44f0_002D90ed_002D7a61ebb26a2a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ea20259f_002Da93f_002D49ef_002D8aa5_002Ddb51ecd201d8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Handle_Command_WithAbstractReference_ShouldReturnExpectedResult" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1e301c6a_002Db33d_002D4014_002D8595_002D0adc449e7c60/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Resolve_CqrsService_And_Handle_Command_And_Query" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::F5F7ED55-5911-43BE-BA51-277724750657::net9.0::Cqrs.Tests.Core.CqrsServiceTests.Handle_Command_WithRegisteredInterfaceHandler_ShouldReturnExpectedResult&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::F5F7ED55-5911-43BE-BA51-277724750657::net9.0::Cqrs.Tests.Core.CqrsServiceTests.Handle_Command_WithUnregisteredInterfaceHandler_ShouldThrow&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F5F7ED55-5911-43BE-BA51-277724750657::net9.0::Cqrs.Tests.DependencyInjection.ServiceExtensionsTests.Resolve_CqrsService_And_Handle_Command_And_Query&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6947a729_002D0d41_002D4bee_002D97e8_002D056cf8b36e4b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AddCqrs_Should_Use_DependencyInjectionInstanceProvider_By_Default" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F5F7ED55-5911-43BE-BA51-277724750657::net9.0::Cqrs.Tests.DependencyInjection.ServiceExtensionsTests.Resolve_CqrsService_NotRegisteredHandler_ShouldThrow&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F5F7ED55-5911-43BE-BA51-277724750657::net9.0::Cqrs.Tests.DependencyInjection.ServiceExtensionsTests.Resolve_CqrsService_RegisteredHandler_ShouldHandleSucessfully&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F5F7ED55-5911-43BE-BA51-277724750657::net9.0::Cqrs.Tests.DependencyInjection.ServiceExtensionsTests.Resolve_CqrsService_InstaceProvider_ShouldReturnDependencyInjectionInstanceProviderByDefault&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F5F7ED55-5911-43BE-BA51-277724750657::net9.0::Cqrs.Tests.DependencyInjection.ServiceExtensionsTests.Resolve_CqrsService_WithNullReturningQuery_ShouldThrow&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	
+	
 	
 	
 	

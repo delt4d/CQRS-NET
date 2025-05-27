@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Cqrs.Tests")]
+[assembly: InternalsVisibleTo("Cqrs.DependencyInjection")]
 
 namespace Cqrs.Core.RegisterResolver;
 
