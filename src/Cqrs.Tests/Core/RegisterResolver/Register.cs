@@ -35,10 +35,13 @@ public class RegisterTests
     public void RegisterCommand_WithInvalidHandler_ShouldThrow()
     {
         var ex = Assert.Throws<ArgumentException>(() =>
-            _register.RegisterCommand<SampleCommand, SampleParameterlessCommandHandler>()
+            _register.RegisterCommand(
+                typeof(SampleCommand),
+                typeof(SampleParameterlessCommandHandler)
+            )
         );
 
-        Assert.That(ex.Message, Does.Contain("does not implement ICommandHandler<SampleCommand>"));
+        Assert.That(ex.Message, Does.Contain($"SampleParameterlessCommandHandler does not implement ICommandHandler<SampleCommand>"));
     }
 
     [Test]
@@ -79,7 +82,7 @@ public class RegisterTests
             _register.RegisterQuery<SampleQuery, SampleParameterlessQuery>()
         );
 
-        Assert.That(ex.Message, Does.Contain("does not implement IQueryHandler<SampleQuery, SampleModel>"));
+        Assert.That(ex.Message, Does.Contain("SampleParameterlessQuery does not implement IQueryHandler<SampleQuery, SampleModel>"));
     }
 
     [Test]
@@ -89,7 +92,7 @@ public class RegisterTests
             _register.RegisterQuery<string, SampleQueryHandler>()
         );
 
-        Assert.That(ex.Message, Does.Contain("does not implement IQuery<TResult>"));
+        Assert.That(ex.Message, Does.Contain("String does not implement IQuery<>"));
     }
     
     [Test]

@@ -10,7 +10,7 @@ namespace Cqrs.Tests.DependencyInjection;
 [TestFixture]
 public class CqrsOptionsTests
 {
-     [Test]
+    [Test]
     public void InjectFromAssembly_ShouldStoreAssembly()
     {
         var options = new CqrsOptions();
@@ -58,8 +58,8 @@ public class CqrsOptionsTests
         });
 
         var resolver = options.Register.BuildCommandQueryResolver();
-        var commandHandlerType = resolver.CommandHandlers[(typeof(SampleCommand))];
-        var queryHandlerType = resolver.QueryHandlers[(typeof(SampleQuery))];
+        var commandHandlerType = resolver.CommandHandlers[typeof(SampleCommand)];
+        var queryHandlerType = resolver.QueryHandlers[typeof(SampleQuery)];
 
         Assert.Multiple(() =>
         {

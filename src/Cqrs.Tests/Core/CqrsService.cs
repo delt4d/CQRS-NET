@@ -105,8 +105,8 @@ public class CqrsServiceTests
         {
             var ex1 = Assert.ThrowsAsync<InvalidOperationException>(() => _service.Handle(new InterfaceCommand()));
             var ex2 = Assert.ThrowsAsync<InvalidOperationException>(() => _service.Handle(new InterfaceQuery()));
-            Assert.That(ex1.Message, Does.Contain("No instance registered for"));
-            Assert.That(ex2.Message, Does.Contain("No instance registered for"));
+            Assert.That(ex1.Message, Does.Contain("No instance registered for IInterfaceCommandHandler"));
+            Assert.That(ex2.Message, Does.Contain("No instance registered for IInterfaceQueryHandler"));
         });
     }
 }

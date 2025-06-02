@@ -10,6 +10,6 @@ public class SampleCommandHandler(IFakeService fakeService) : ICommandHandler<Sa
 {
     public Task Handle(SampleCommand command, CancellationToken? cancellation)
     {
-        return Task.CompletedTask;
+        return fakeService.Execute();
     }
 }

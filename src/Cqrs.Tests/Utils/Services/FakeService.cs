@@ -6,9 +6,15 @@ public class FakeService : IFakeService
     {
         return Task.FromResult(value);
     }
+
+    public Task Execute()
+    {
+        return Task.CompletedTask;
+    }
 }
 
 public interface IFakeService
 {
     public Task<T> GetResult<T>(T value);
+    public Task Execute();
 }
