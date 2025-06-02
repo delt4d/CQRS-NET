@@ -48,8 +48,8 @@ public class ServiceExtensionsTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(ex1.Message, Does.Contain("No command handler registered for"));
-            Assert.That(ex2.Message, Does.Contain("No query handler registered for"));
+            Assert.That(ex1.Message, Does.Contain("No command handler registered for SampleParameterlessCommand"));
+            Assert.That(ex2.Message, Does.Contain("No query handler registered for SampleParameterlessQuery"));
         });
     }
 

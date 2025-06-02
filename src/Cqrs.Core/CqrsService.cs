@@ -1,4 +1,5 @@
-﻿using Cqrs.Core.Providers;
+﻿using Cqrs.Core.Exceptions;
+using Cqrs.Core.Providers;
 using Cqrs.Core.RegisterResolver;
 
 namespace Cqrs.Core;
@@ -9,9 +10,9 @@ public class CqrsService(CqrsCommandQueryResolver commandQueryResolver, IInstanc
     public Task Handle(ICommand command, CancellationToken? cancellationToken = null)
     {
         var commandType = command.GetType();
-        
+
         if (!commandQueryResolver.TryGetCommandHandler(commandType, out var genericHandlerType))
-            throw new InvalidOperationException($"No command handler registered for {commandType.Name}");
+            throw CqrsExceptionsHelper.CommandHandlerNotRegistered(commandType);
 
         var instance = instanceProvider.GetInstance(genericHandlerType);
         
@@ -24,7 +25,7 @@ public class CqrsService(CqrsCommandQueryResolver commandQueryResolver, IInstanc
         var queryType = query.GetType();
         
         if (!commandQueryResolver.TryGetQueryHandler(queryType, out var genericHandlerType)) 
-            throw new InvalidOperationException($"No query handler registered for {queryType.Name}");
+            throw CqrsExceptionsHelper.QueryHandlerNotRegistered(queryType);
         
         var instance = instanceProvider.GetInstance(genericHandlerType);
         

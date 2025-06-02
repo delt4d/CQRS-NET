@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Cqrs.Core.Utils;
+using System.Collections.Concurrent;
 
 namespace Cqrs.Core.Providers;
 
@@ -45,16 +46,9 @@ public class LocalInstanceProvider : IInstanceProvider
     
     private static void EnsureIsHandler<T>()  where T : class
     {
-        var genericType = typeof(T);
-
-        if (!genericType.GetInterfaces()
-                .Any(interfaceType => interfaceType.IsGenericType && 
-                                      IsHandlerDefinition(interfaceType.GetGenericTypeDefinition())))
-            throw new InvalidOperationException($"{genericType.FullName} it's not a command handler nor a query handler.");
-    }
-
-    private static bool IsHandlerDefinition(Type definition)
-    {
-        return definition == typeof(ICommandHandler<>) || definition == typeof(IQueryHandler<,>);
+        var type = typeof(T);
+        
+        if (!type.IsHandler())
+            throw new InvalidOperationException($"{type.Name} it's not a command handler nor a query handler.");
     }
 }
