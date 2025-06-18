@@ -1,22 +1,32 @@
-﻿using Cqrs.Core;
-using Cqrs.Core.Exceptions;
+﻿using Cqrs.Core.Exceptions;
 using Cqrs.Core.Utils;
 
 namespace Cqrs.Core.RegisterResolver;
 
+/// <summary>
+/// The <c>CqrsRegister</c> class is responsible for registering which handler types should be used
+/// for specific commands and queries.
+/// It validates handler compatibility and maps commands/queries to their corresponding handlers.
+/// </summary>
 public sealed class CqrsRegister
 {
     private readonly CqrsCommandQueryResolver _commandQueryResolver = new();
-    
+
     public void RegisterCommand(Type commandType, Type handlerType)
     {
         if (!commandType.IsCommand())
             throw CqrsExceptionsHelper.NotCommand(commandType);
 
-        if (!handlerType.IsCommandHandler())
-            throw CqrsExceptionsHelper.NotCommandHandler(handlerType);
+        var commandResult = CqrsUtils.GetCommandResultOrDefault(commandType);
 
-        var handlerInterface = CqrsUtils.GetHandlerInterfaceFromCommand(commandType);
+        if (!handlerType.IsCommandHandler())
+        {
+            if (commandResult is not null)
+                throw CqrsExceptionsHelper.NotCommandHandler(handlerType, commandResult);
+            throw CqrsExceptionsHelper.NotCommandHandler(handlerType);
+        }
+
+        var handlerInterface = CqrsUtils.GetHandlerInterfaceFromCommand(commandType, commandResult);
 
         if (!handlerInterface.IsAssignableFrom(handlerType))
             throw CqrsExceptionsHelper.NotCommandHandler(handlerType, commandType);
@@ -26,7 +36,7 @@ public sealed class CqrsRegister
 
     public void RegisterCommand<TCommand, TCommandHandler>()
         where TCommand : ICommand
-        where TCommandHandler : ICommandHandler<TCommand>
+        where TCommandHandler : ICommandHandler
     {
         _commandQueryResolver.CommandHandlers[typeof(TCommand)] = typeof(TCommandHandler);
     }

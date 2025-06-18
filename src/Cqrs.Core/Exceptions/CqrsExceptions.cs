@@ -29,7 +29,7 @@ public static class CqrsExceptionsHelper
     public static ArgumentException NotCommandHandler(Type type)
     {
         ArgumentNullException.ThrowIfNull(type);
-        return new ArgumentException($"{type.Name} does not implement ICommandHandler<>");
+        return new ArgumentException($"{type.Name} does not implement ICommandHandler");
     }
 
     public static ArgumentException NotCommandHandler(Type type, Type commandType)
@@ -37,6 +37,14 @@ public static class CqrsExceptionsHelper
         ArgumentNullException.ThrowIfNull(type);
         ArgumentNullException.ThrowIfNull(commandType);
         return new ArgumentException($"{type.Name} does not implement ICommandHandler<{commandType.Name}>");
+    }
+
+    public static ArgumentException NotCommandHandler(Type type, Type commandType, Type resultType)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(commandType);
+        ArgumentNullException.ThrowIfNull(resultType);
+        return new ArgumentException($"{type.Name} does not implement ICommandHandler<{commandType.Name}, {resultType.Name}>");
     }
 
     public static ArgumentException NotQueryHandler(Type type)

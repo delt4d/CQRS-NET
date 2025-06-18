@@ -20,17 +20,17 @@ public class UserService : IUserService
         return Task.FromResult(result);
     }
 
-    public Task Save(User user, CancellationToken? cancellationToken)
+    public Task<User> Save(User user, CancellationToken? cancellationToken)
     {
         if (_users.Any(x => x.Id == user.Id))
             throw new Exception($"A user with id {user.Id} already exists.");
         
         _users.Add(user);
 
-        return Task.CompletedTask;
+        return Task.FromResult(_users.Last());
     }
 
-    public Task Update(User user, CancellationToken? cancellationToken)
+    public Task<User> Update(User user, CancellationToken? cancellationToken)
     {
         var index = _users.FindIndex(x => x.Id == user.Id);
         
@@ -39,16 +39,14 @@ public class UserService : IUserService
 
         _users[index] = user;
 
-        return Task.CompletedTask;
+        return Task.FromResult(_users[index]);
     }
 
     public Task Delete(string userId, CancellationToken? cancellationToken)
     {
-        var user = _users.FirstOrDefault(x => x.Id == userId);
+        var user = _users.FirstOrDefault(x => x.Id == userId)
+            ?? throw new Exception($"A user with id {userId} was not found to delete.");
 
-        if (user is null)
-            throw new Exception($"A user with id {userId} was not found to delete.");
-        
         _users.Remove(user);
 
         return Task.CompletedTask;
@@ -59,7 +57,7 @@ public interface IUserService
 {
     public Task<User> GetById(string id, CancellationToken? cancellationToken);
     public Task<User> GetByName(string name, CancellationToken? cancellationToken);
-    public Task Save(User user, CancellationToken? cancellationToken);
-    public Task Update(User user, CancellationToken? cancellationToken);
+    public Task<User> Save(User user, CancellationToken? cancellationToken);
+    public Task<User> Update(User user, CancellationToken? cancellationToken);
     public Task Delete(string userId, CancellationToken? cancellationToken);
 }

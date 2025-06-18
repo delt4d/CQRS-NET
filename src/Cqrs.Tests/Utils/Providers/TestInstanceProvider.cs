@@ -2,7 +2,7 @@
 
 public class TestInstanceProvider : IInstanceProvider
 {
-    private readonly Dictionary<Type, object> _instances = new();
+    private readonly Dictionary<Type, object> _instances = [];
 
     public void Register<T>(T instance)
     {

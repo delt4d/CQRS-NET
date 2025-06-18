@@ -20,6 +20,7 @@ public class CqrsServiceTests
         _register = new CqrsRegister();
         _register.RegisterCommand<SampleCommand, SampleCommandHandler>();
         _register.RegisterCommand<SampleParameterlessCommand, SampleParameterlessCommandHandler>();
+        _register.RegisterCommand<SampleCommandWithResult, SampleCommandWithResultHandler>();
         _register.RegisterQuery<SampleQuery, SampleQueryHandler>();
         _register.RegisterQuery<SampleParameterlessQuery, SampleParameterlessQueryHandler>();
 
@@ -33,11 +34,13 @@ public class CqrsServiceTests
     {
         _instanceProvider.Register(new SampleCommandHandler(new FakeService()));
         _instanceProvider.Register(new SampleParameterlessCommandHandler());
+        _instanceProvider.Register(new SampleCommandWithResultHandler(new FakeService()));
 
         Assert.Multiple(() =>
         {
             Assert.DoesNotThrowAsync(() => _service.Handle(new SampleCommand()));
             Assert.DoesNotThrowAsync(() => _service.Handle(new SampleParameterlessCommand()));
+            Assert.DoesNotThrowAsync(() => _service.Handle(new SampleCommandWithResult()));
         });
     }
 
@@ -82,13 +85,16 @@ public class CqrsServiceTests
     public void Handle_Command_WithRegisteredInterfaceHandler_ShouldReturnExpectedResult()
     {
         _register.RegisterCommand<InterfaceCommand, IInterfaceCommandHandler>();
+        _register.RegisterCommand<InterfaceCommandWithResult, IInterfaceCommandWithResultHandler>();
         _register.RegisterQuery<InterfaceQuery, IInterfaceQueryHandler>();
         _instanceProvider.Register<IInterfaceCommandHandler>(new InterfaceCommandHandler());
+        _instanceProvider.Register<IInterfaceCommandWithResultHandler>(new InterfaceCommandWithResultHandler());
         _instanceProvider.Register<IInterfaceQueryHandler>(new InterfaceQueryHandler());
         
         Assert.Multiple(() =>
         {
             Assert.DoesNotThrowAsync(() => _service.Handle(new InterfaceCommand()));
+            Assert.DoesNotThrowAsync(() => _service.Handle(new InterfaceCommandWithResult()));
             Assert.DoesNotThrowAsync(() => _service.Handle(new InterfaceQuery()));
         });
     }
@@ -97,16 +103,23 @@ public class CqrsServiceTests
     public void Handle_Command_WithUnregisteredInterfaceHandler_ShouldThrow()
     {
         _register.RegisterCommand<InterfaceCommand, IInterfaceCommandHandler>();
+        _register.RegisterCommand<InterfaceCommandWithResult, IInterfaceCommandWithResultHandler>();
         _register.RegisterQuery<InterfaceQuery, IInterfaceQueryHandler>();
+
+        // Here, instances are registered without specifying the interfaces
         _instanceProvider.Register(new InterfaceCommandHandler());
+        _instanceProvider.Register(new InterfaceCommandWithResultHandler());
         _instanceProvider.Register(new InterfaceQueryHandler());
         
         Assert.Multiple(() =>
         {
             var ex1 = Assert.ThrowsAsync<InvalidOperationException>(() => _service.Handle(new InterfaceCommand()));
-            var ex2 = Assert.ThrowsAsync<InvalidOperationException>(() => _service.Handle(new InterfaceQuery()));
-            Assert.That(ex1.Message, Does.Contain("No instance registered for IInterfaceCommandHandler"));
-            Assert.That(ex2.Message, Does.Contain("No instance registered for IInterfaceQueryHandler"));
+            var ex2 = Assert.ThrowsAsync<InvalidOperationException>(() => _service.Handle(new InterfaceCommandWithResult()));
+            var ex3 = Assert.ThrowsAsync<InvalidOperationException>(() => _service.Handle(new InterfaceQuery()));
+
+            Assert.That(ex1?.Message, Does.Contain("No instance registered for IInterfaceCommandHandler"));
+            Assert.That(ex2?.Message, Does.Contain("No instance registered for IInterfaceCommandWithResultHandler"));
+            Assert.That(ex3?.Message, Does.Contain("No instance registered for IInterfaceQueryHandler"));
         });
     }
 }

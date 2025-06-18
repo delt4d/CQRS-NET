@@ -8,8 +8,8 @@ namespace Cqrs.Core.RegisterResolver;
 
 public sealed class CqrsCommandQueryResolver
 {
-    internal readonly Dictionary<Type, Type> CommandHandlers = new();
-    internal readonly Dictionary<Type, Type> QueryHandlers = new();
+    internal readonly Dictionary<Type, Type> CommandHandlers = [];
+    internal readonly Dictionary<Type, Type> QueryHandlers = [];
 
     public bool TryGetCommandHandler(
         Type command,

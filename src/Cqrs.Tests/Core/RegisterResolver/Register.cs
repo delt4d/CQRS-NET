@@ -18,6 +18,7 @@ public class RegisterTests
     public void RegisterCommand_WithValidHandler_ShouldRegisterSuccessfully() 
     {
         _register.RegisterCommand<SampleCommand, SampleCommandHandler>();
+        _register.RegisterCommand<SampleCommandWithResult, SampleCommandWithResultHandler>();
         _register.RegisterCommand<SampleParameterlessCommand, SampleParameterlessCommandHandler>();
 
         var resolver = _register.BuildCommandQueryResolver();
@@ -25,8 +26,10 @@ public class RegisterTests
         Assert.Multiple(() =>
         {
             Assert.That(resolver.CommandHandlers.ContainsKey(typeof(SampleCommand)), Is.True);
+            Assert.That(resolver.CommandHandlers.ContainsKey(typeof(SampleCommandWithResult)), Is.True);
             Assert.That(resolver.CommandHandlers.ContainsKey(typeof(SampleParameterlessCommand)), Is.True);
             Assert.That(resolver.CommandHandlers[typeof(SampleCommand)], Is.EqualTo(typeof(SampleCommandHandler)));
+            Assert.That(resolver.CommandHandlers[typeof(SampleCommandWithResult)], Is.EqualTo(typeof(SampleCommandWithResultHandler)));
             Assert.That(resolver.CommandHandlers[typeof(SampleParameterlessCommand)], Is.EqualTo(typeof(SampleParameterlessCommandHandler)));
         });
     }
@@ -34,20 +37,40 @@ public class RegisterTests
     [Test]
     public void RegisterCommand_WithInvalidHandler_ShouldThrow()
     {
-        var ex = Assert.Throws<ArgumentException>(() =>
+        var ex1 = Assert.Throws<ArgumentException>(() =>
             _register.RegisterCommand(
                 typeof(SampleCommand),
                 typeof(SampleParameterlessCommandHandler)
             )
         );
 
-        Assert.That(ex.Message, Does.Contain($"SampleParameterlessCommandHandler does not implement ICommandHandler<SampleCommand>"));
+        var ex2 = Assert.Throws<ArgumentException>(() =>
+            _register.RegisterCommand(
+                typeof(SampleCommandWithResult),
+                typeof(SampleParameterlessCommandHandler)
+            )
+        );
+
+        var ex3 = Assert.Throws<ArgumentException>(() =>
+            _register.RegisterCommand(
+                typeof(SampleCommandWithResult),
+                typeof(InterfaceCommandWithResultHandler)
+            )
+        );
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex1.Message, Does.Contain($"SampleParameterlessCommandHandler does not implement ICommandHandler<SampleCommand>"));
+            Assert.That(ex2.Message, Does.Contain($"SampleParameterlessCommandHandler does not implement ICommandHandler<SampleCommandWithResult>"));
+            Assert.That(ex3.Message, Does.Contain($"InterfaceCommandWithResultHandler does not implement ICommandHandler<SampleCommandWithResult>"));
+        });
     }
 
     [Test]
     public void RegisterCommand_WithAbstractCommandHandler_ShouldRegisterSuccessfully()
     {
         _register.RegisterCommand<InterfaceCommand, IInterfaceCommandHandler>();
+        _register.RegisterCommand<InterfaceCommandWithResult, IInterfaceCommandWithResultHandler>();
 
         var resolver = _register.BuildCommandQueryResolver();
 
@@ -55,6 +78,8 @@ public class RegisterTests
         {
             Assert.That(resolver.CommandHandlers.ContainsKey(typeof(InterfaceCommand)), Is.True);
             Assert.That(resolver.CommandHandlers[typeof(InterfaceCommand)], Is.EqualTo(typeof(IInterfaceCommandHandler)));
+            Assert.That(resolver.CommandHandlers.ContainsKey(typeof(InterfaceCommandWithResult)), Is.True);
+            Assert.That(resolver.CommandHandlers[typeof(InterfaceCommandWithResult)], Is.EqualTo(typeof(IInterfaceCommandWithResultHandler)));
         });
     }
 
@@ -88,11 +113,24 @@ public class RegisterTests
     [Test]
     public void RegisterQuery_WithTypeNotImplementingIQuery_ShouldThrow()
     {
-        var ex = Assert.Throws<ArgumentException>(() =>
+        var ex1 = Assert.Throws<ArgumentException>(() =>
             _register.RegisterQuery<string, SampleQueryHandler>()
         );
 
-        Assert.That(ex.Message, Does.Contain("String does not implement IQuery<>"));
+        var ex2 = Assert.Throws<ArgumentException>(() =>
+            _register.RegisterQuery<int, SampleQueryHandler>()
+        );
+
+        var ex3 = Assert.Throws<ArgumentException>(() =>
+            _register.RegisterQuery<bool, SampleQueryHandler>()
+        );
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex1.Message, Does.Contain("String does not implement IQuery<>"));
+            Assert.That(ex2.Message, Does.Contain("Int32 does not implement IQuery<>"));
+            Assert.That(ex3.Message, Does.Contain("Boolean does not implement IQuery<>"));
+        });
     }
     
     [Test]

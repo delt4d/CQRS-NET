@@ -5,7 +5,16 @@ namespace Cqrs.Core.Utils;
 internal static class CqrsUtils
 {
     internal static bool IsCommand(this Type type) =>
-        typeof(ICommand).IsAssignableFrom(type);
+        typeof(ICommand).IsAssignableFrom(type) ||
+        typeof(ICommand<>).IsAssignableFrom(type);
+
+    internal static Type? GetCommandResultOrDefault(this Type type)
+    {
+        if (!type.IsCommand()) return null;
+    
+        var commandInterface = GetCommandInterfaceFromCommand(type);
+        return GetResultTypeFromCommandInterface(commandInterface);
+    }
 
     internal static bool IsQuery(this Type type) =>
         type.GetInterfaces().Any(src => src.IsQueryInterface());
@@ -26,10 +35,29 @@ internal static class CqrsUtils
         type.GetInterfaces().Any(src => src.IsCommandHandlerInterface() || src.IsQueryHandlerInterface());
 
     internal static bool IsCommandInterface(this Type type) =>
-        type == typeof(ICommand);
+        type == typeof(ICommand) ||
+        type == typeof(ICommand<>);
 
     internal static bool IsCommandHandlerInterface(this Type type) =>
-        type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ICommandHandler<>);
+        type.IsGenericType && (
+            type.GetGenericTypeDefinition() == typeof(ICommandHandler<>) ||
+            type.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)
+        );
+
+    internal static Type? GetResultTypeFromCommandInterface(Type type)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+
+        if (!type.IsCommandInterface())
+            throw CqrsExceptionsHelper.NotCommandInterface(type);
+
+        var genericArguments = type.GetGenericArguments();
+
+        if (genericArguments.Length == 0)
+            return null;
+
+        return genericArguments.ElementAt(0);
+    }
 
     internal static Type GetResultTypeFromQueryInterface(Type type)
     {
@@ -38,16 +66,18 @@ internal static class CqrsUtils
         if (!type.IsQueryInterface())
             throw CqrsExceptionsHelper.NotQueryInterface(type);
 
-        return type.GetGenericArguments().ElementAt(0); // TODO: Throw an error if result is null
+        return type.GetGenericArguments().ElementAt(0);
     }
 
-    internal static Type GetHandlerInterfaceFromCommand(Type type)
+    internal static Type GetHandlerInterfaceFromCommand(Type type, Type? typeResult)
     {
         ArgumentNullException.ThrowIfNull(type);
 
         if (!type.IsCommand())
             throw CqrsExceptionsHelper.NotCommand(type);
 
+        if (typeResult is not null)
+            return typeof(ICommandHandler<,>).MakeGenericType(type, typeResult); // ICommandHandler<TCommand, TResult>
         return typeof(ICommandHandler<>).MakeGenericType(type); // ICommandHandler<TCommand>
     }
 
