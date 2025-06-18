@@ -6,7 +6,7 @@ namespace Cqrs.Shared.CommandsWithResults;
 public record UpdateUserResult(User UpdatedUser, DateTime StartedAt, DateTime FinishedAt);
 public record UpdateUserCommandWithResult(User UpdateUser) : ICommand<UpdateUserResult>;
 
-public class UpdateUserCommandHandlerWithResult(IUserService userService) : ICommandHandler<UpdateUserCommandWithResult, UpdateUserResult>
+public class UpdateUserCommandWithResultHandler(IUserService userService) : ICommandHandler<UpdateUserCommandWithResult, UpdateUserResult>
 {
     public async Task<UpdateUserResult> Handle(UpdateUserCommandWithResult command, CancellationToken? cancellationToken)
     {
