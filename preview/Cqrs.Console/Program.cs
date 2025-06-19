@@ -78,10 +78,13 @@ class Program
             System.Console.WriteLine("User deleted.");
 
             await ExceptNotToThrowAsync(() => container.Handle(new GetUserByIdQuery(updatedUser2Result.UpdatedUser.Id)), "Expected user not to be deleted");
+
+            System.Console.WriteLine("Success!");
         }
         catch (Exception ex)
         {
             System.Console.WriteLine($"Unexpected exception: {ex.Message}");
+            System.Console.WriteLine("Failed!");
         }
     }
 
