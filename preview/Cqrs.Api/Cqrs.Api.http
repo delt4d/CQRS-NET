@@ -1,15 +1,10 @@
 @Api_HostAddress = http://localhost:5064
 
-### Get user by ID
-GET {{Api_HostAddress}}/query/id/123
-Accept: application/json
-
-### Get user by name
-GET {{Api_HostAddress}}/query/name/myname
-Accept: application/json
-
 ### Create user with ID
 GET {{Api_HostAddress}}/command/create-user/123
+
+### Create user for result
+GET {{Api_HostAddress}}/command/create-user
 
 ### Update user with ID
 GET {{Api_HostAddress}}/command/update-user/123
@@ -17,9 +12,10 @@ GET {{Api_HostAddress}}/command/update-user/123
 ### Delete user with ID
 GET {{Api_HostAddress}}/command/delete-user/123
 
-### Get user by ID using DI
-GET {{Api_HostAddress}}/query/di/123
+### Get user by ID
+GET {{Api_HostAddress}}/query/id/123
 Accept: application/json
 
-### Create user using DI
-GET {{Api_HostAddress}}/command/di/123
+### Get user by name
+GET {{Api_HostAddress}}/query/name/myname
+Accept: application/json
