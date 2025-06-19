@@ -40,18 +40,25 @@ public class RegisterTests
         var ex1 = Assert.Throws<ArgumentException>(() =>
             _register.RegisterCommand(
                 typeof(SampleCommand),
-                typeof(SampleParameterlessCommandHandler)
+                typeof(SampleParameterlessCommand)
             )
         );
 
         var ex2 = Assert.Throws<ArgumentException>(() =>
+            _register.RegisterCommand(
+                typeof(SampleCommand),
+                typeof(SampleParameterlessCommandHandler)
+            )
+        );
+
+        var ex3 = Assert.Throws<ArgumentException>(() =>
             _register.RegisterCommand(
                 typeof(SampleCommandWithResult),
                 typeof(SampleParameterlessCommandHandler)
             )
         );
 
-        var ex3 = Assert.Throws<ArgumentException>(() =>
+        var ex4 = Assert.Throws<ArgumentException>(() =>
             _register.RegisterCommand(
                 typeof(SampleCommandWithResult),
                 typeof(InterfaceCommandWithResultHandler)
@@ -60,9 +67,9 @@ public class RegisterTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(ex1.Message, Does.Contain($"SampleParameterlessCommandHandler does not implement ICommandHandler<SampleCommand>"));
-            Assert.That(ex2.Message, Does.Contain($"SampleParameterlessCommandHandler does not implement ICommandHandler<SampleCommandWithResult>"));
-            Assert.That(ex3.Message, Does.Contain($"InterfaceCommandWithResultHandler does not implement ICommandHandler<SampleCommandWithResult>"));
+            Assert.That(ex2.Message, Does.Contain($"SampleParameterlessCommandHandler does not implement ICommandHandler<SampleCommand>"));
+            Assert.That(ex3.Message, Does.Contain($"SampleParameterlessCommandHandler does not implement ICommandHandler<SampleCommandWithResult>"));
+            Assert.That(ex4.Message, Does.Contain($"InterfaceCommandWithResultHandler does not implement ICommandHandler<SampleCommandWithResult>"));
         });
     }
 
@@ -103,11 +110,24 @@ public class RegisterTests
     [Test]
     public void RegisterQuery_WithInvalidHandler_ShouldThrow()
     {
-        var ex = Assert.Throws<ArgumentException>(() =>
+        var ex1 = Assert.Throws<ArgumentException>(() =>
             _register.RegisterQuery<SampleQuery, SampleParameterlessQuery>()
         );
 
-        Assert.That(ex.Message, Does.Contain("SampleParameterlessQuery does not implement IQueryHandler<SampleQuery, SampleModel>"));
+        var ex2 = Assert.Throws<ArgumentException>(() =>
+            _register.RegisterQuery<SampleQuery, SampleParameterlessQueryHandler>()
+        );
+
+        var ex3 = Assert.Throws<ArgumentException>(() =>
+            _register.RegisterQuery<SampleParameterlessQuery, SampleQueryHandler>()
+        );
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex1.Message, Does.Contain("SampleParameterlessQuery does not implement IQueryHandler<SampleQuery, SampleModel>"));
+            Assert.That(ex2.Message, Does.Contain("SampleParameterlessQueryHandler does not implement IQueryHandler<SampleQuery, SampleModel>"));
+            Assert.That(ex3.Message, Does.Contain("SampleQueryHandler does not implement IQueryHandler<SampleParameterlessQuery, SampleModel>"));
+        });
     }
 
     [Test]
