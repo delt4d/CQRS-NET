@@ -12,21 +12,31 @@ public sealed class CqrsRegister
 {
     private readonly CqrsCommandQueryResolver _commandQueryResolver = new();
 
-    public void RegisterCommand(Type commandType, Type handlerType)
+    public void RegisterCommand(Type commandType, Type commandHandlerType)
     {
-        if (!commandType.IsCommand(out var commandTypeEnum, out var commandResultType))
+        if (!commandType.IsCommand(out var commandTypeEnum, out var commandResult))
             throw CqrsExceptionsHelper.NotCommand(commandType);
 
-        if (!handlerType.IsCommandHandler(
+        if (!commandHandlerType.IsCommandHandler(
             out var commandHandlerInterface,
             out var commandHandlerInterfaceDefinition))
         {
             if (commandTypeEnum.Equals(CommandTypeEnum.CommandWithResult))
-                throw CqrsExceptionsHelper.NotCommandHandler(handlerType, commandType, commandResultType!);
-            throw CqrsExceptionsHelper.NotCommandHandler(handlerType);
+                throw CqrsExceptionsHelper.NotCommandHandler(commandHandlerType, commandType, commandResult!);
+
+            throw CqrsExceptionsHelper.NotCommandHandler(commandHandlerType);
         }
 
-        _commandQueryResolver.CommandHandlers[commandType] = handlerType;
+        var commandHandlerArguments = commandHandlerInterface.GetGenericArguments();
+
+        if (!commandHandlerArguments.ElementAt(0).Equals(commandType))
+            throw CqrsExceptionsHelper.NotCommandHandler(commandHandlerType, commandType);
+
+        if (commandTypeEnum.Equals(CommandTypeEnum.CommandWithResult)
+            && !commandHandlerArguments.ElementAt(1).Equals(commandResult))
+            throw CqrsExceptionsHelper.NotCommandHandler(commandHandlerType, commandType, commandResult!);
+
+        _commandQueryResolver.CommandHandlers[commandType] = commandHandlerType;
     }
 
     public void RegisterCommand<TCommand, TCommandHandler>()
@@ -36,19 +46,24 @@ public sealed class CqrsRegister
         _commandQueryResolver.CommandHandlers[typeof(TCommand)] = typeof(TCommandHandler);
     }
 
-    public void RegisterQuery(Type queryType, Type handlerType)
+    public void RegisterQuery(Type queryType, Type queryHandlerType)
     {
-        if (!queryType.IsQuery(out var queryInterface, out var queryInterfaceDefinition, out var resultType))
+        if (!queryType.IsQuery(out var queryInterface, out var queryInterfaceDefinition, out var queryResult))
             throw CqrsExceptionsHelper.NotQuery(queryType);
 
-        if (!handlerType.IsQueryHandler(
+        if (!queryHandlerType.IsQueryHandler(
             out var queryHandlerInterface,
             out var queryHandlerInterfaceDefinition))
         {
-            throw CqrsExceptionsHelper.NotQueryHandler(handlerType, queryType, resultType);
+            throw CqrsExceptionsHelper.NotQueryHandler(queryHandlerType, queryType, queryResult);
         }
 
-        _commandQueryResolver.QueryHandlers[queryType] = handlerType;
+        var commandHandlerArguments = queryHandlerInterface.GetGenericArguments();
+
+        if (!commandHandlerArguments.ElementAt(0).Equals(queryType))
+            throw CqrsExceptionsHelper.NotQueryHandler(queryHandlerType, queryType, queryResult);
+
+        _commandQueryResolver.QueryHandlers[queryType] = queryHandlerType;
     }
 
     public void RegisterQuery<TQuery, TQueryHandler>()
