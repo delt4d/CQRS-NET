@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using Cqrs.Core;
+using Cqrs.Core.Exceptions;
 using Cqrs.Core.Providers;
 using Cqrs.Core.RegisterResolver;
+using Cqrs.Core.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: InternalsVisibleTo("Cqrs.Tests")]
@@ -42,28 +44,31 @@ public class CqrsOptions
 
     private void RegisterFromAssembly(IServiceCollection services, Assembly assembly)
     {
-        var types = assembly.GetTypes();
-
-        foreach (var type in types)
+        foreach (var handlerType in assembly.GetTypes())
         {
-            if (!type.IsClass || type.IsAbstract)
+            if (!handlerType.IsClass || handlerType.IsAbstract)
                 continue;
 
-            var interfaces = type.GetInterfaces();
+            var interfaces = handlerType.GetInterfaces();
 
-            foreach (var definition in GetGenericTypesDefinition(interfaces))
+            foreach (var handlerInterface in interfaces)
             {
-                if (definition == typeof(ICommandHandler<>))
+                if (!handlerInterface.IsGenericType)
+                    continue;
+
+                var definition = handlerInterface.GetGenericTypeDefinition();
+
+                if (definition == typeof(ICommandHandler<>) || definition == typeof(ICommandHandler<,>))
                 {
-                    Register.RegisterCommand(GetCommand(type), type);
-                    services.AddTransient(type);
+                    Register.RegisterCommand(GetCommand(handlerType), handlerType);
+                    services.AddTransient(handlerType);
                     break;
                 }
 
                 if (definition == typeof(IQueryHandler<,>))
                 {
-                    Register.RegisterQuery(GetQuery(type), type);
-                    services.AddTransient(type);
+                    Register.RegisterQuery(GetQuery(handlerType), handlerType);
+                    services.AddTransient(handlerType);
                     break;
                 }
             }
@@ -78,29 +83,35 @@ public class CqrsOptions
             select type.GetGenericTypeDefinition();
     }
 
-    private static Type GetCommand(Type handlerType)
+    private static Type GetCommand(Type commandHandlerType)
     {
-        var handlerInterfaceType = handlerType.GetInterfaces()
-            .FirstOrDefault(itf => 
-                itf.IsGenericType &&
-                itf.GetGenericTypeDefinition() == typeof(ICommandHandler<>));
-        
-        if (handlerInterfaceType is null)
-            throw new InvalidOperationException($"Handler {handlerType.Name} does not implement ICommandHandler<>");
+        var interfaces = commandHandlerType.GetInterfaces();
 
-        return handlerInterfaceType.GetGenericArguments().ElementAt(0);
+        foreach (var commandHandlerInterface in interfaces)
+        {
+            if (commandHandlerInterface.IsCommandHandlerInterface(out var commandHandlerInterfaceDefinition))
+            {
+                var commandHandlerArguments = commandHandlerInterface.GetGenericArguments();
+                return commandHandlerArguments.ElementAt(0);
+            }
+        }
+
+        throw CqrsExceptionsHelper.NotCommandHandler(commandHandlerType);
     }
 
-    private static Type GetQuery(Type queryType)
+    private static Type GetQuery(Type queryHandlerType)
     {
-        var queryInterfaceType = queryType.GetInterfaces()
-            .FirstOrDefault(itf =>
-                itf.IsGenericType &&
-                itf.GetGenericTypeDefinition() == typeof(IQueryHandler<,>));
-        
-        if (queryInterfaceType is null)
-            throw new InvalidOperationException($"Handler {queryType.Name} does not implement IQueryHandler<>");
+        var interfaces = queryHandlerType.GetInterfaces();
 
-        return queryInterfaceType.GetGenericArguments().ElementAt(0);
+        foreach (var queryHandlerInterface in interfaces)
+        {
+            if (queryHandlerInterface.IsQueryHandlerInterface(out var queryHandlerInterfaceDefinition))
+            {
+                var queryHandlerArguments = queryHandlerInterface.GetGenericArguments();
+                return queryHandlerArguments.ElementAt(0);
+            }
+        }
+
+        throw CqrsExceptionsHelper.NotQueryHandler(queryHandlerType);
     }
 }

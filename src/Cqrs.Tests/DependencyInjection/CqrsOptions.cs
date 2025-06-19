@@ -50,7 +50,7 @@ public class CqrsOptionsTests
         var provider = services.BuildServiceProvider();
         var handler1 = provider.GetService<SampleCommandHandler>();
         var handler2 = provider.GetService<SampleQueryHandler>();
-        var handler3 = provider.GetService<SampleCommandWithResult>();
+        var handler3 = provider.GetService<SampleCommandWithResultHandler>();
 
         Assert.Multiple(() =>
         {
@@ -67,7 +67,7 @@ public class CqrsOptionsTests
         Assert.Multiple(() =>
         {
             Assert.That(commandHandlerType, Is.EqualTo(typeof(SampleCommandHandler)));
-            Assert.That(commandHandlerWithResultType, Is.EqualTo(typeof(SampleCommandWithResult)));
+            Assert.That(commandHandlerWithResultType, Is.EqualTo(typeof(SampleCommandWithResultHandler)));
             Assert.That(queryHandlerType, Is.EqualTo(typeof(SampleQueryHandler)));
         });
     }
