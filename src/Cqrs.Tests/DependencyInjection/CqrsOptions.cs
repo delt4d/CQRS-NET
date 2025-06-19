@@ -33,7 +33,7 @@ public class CqrsOptionsTests
         Assert.That(value, Is.Not.Null);
         return;
 
-        IInstanceProvider Dummy(IServiceProvider _) => new DependencyInjectionInstanceProvider(new ServiceCollection().BuildServiceProvider());
+        static IInstanceProvider Dummy(IServiceProvider _) => new DependencyInjectionInstanceProvider(new ServiceCollection().BuildServiceProvider());
     }
 
     [Test]
@@ -50,20 +50,24 @@ public class CqrsOptionsTests
         var provider = services.BuildServiceProvider();
         var handler1 = provider.GetService<SampleCommandHandler>();
         var handler2 = provider.GetService<SampleQueryHandler>();
+        var handler3 = provider.GetService<SampleCommandWithResult>();
 
         Assert.Multiple(() =>
         {
             Assert.That(handler1, Is.Not.Null);
             Assert.That(handler2, Is.Not.Null);
+            Assert.That(handler3, Is.Not.Null);
         });
 
         var resolver = options.Register.BuildCommandQueryResolver();
         var commandHandlerType = resolver.CommandHandlers[typeof(SampleCommand)];
+        var commandHandlerWithResultType = resolver.CommandHandlers[typeof(SampleCommandWithResult)];
         var queryHandlerType = resolver.QueryHandlers[typeof(SampleQuery)];
 
         Assert.Multiple(() =>
         {
             Assert.That(commandHandlerType, Is.EqualTo(typeof(SampleCommandHandler)));
+            Assert.That(commandHandlerWithResultType, Is.EqualTo(typeof(SampleCommandWithResult)));
             Assert.That(queryHandlerType, Is.EqualTo(typeof(SampleQueryHandler)));
         });
     }
