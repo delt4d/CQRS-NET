@@ -14,22 +14,17 @@ public sealed class CqrsRegister
 
     public void RegisterCommand(Type commandType, Type handlerType)
     {
-        if (!commandType.IsCommand())
+        if (!commandType.IsCommand(out var commandTypeEnum, out var commandResultType))
             throw CqrsExceptionsHelper.NotCommand(commandType);
 
-        var commandResult = CqrsUtils.GetCommandResultOrDefault(commandType);
-
-        if (!handlerType.IsCommandHandler())
+        if (!handlerType.IsCommandHandler(
+            out var commandHandlerInterface,
+            out var commandHandlerInterfaceDefinition))
         {
-            if (commandResult is not null)
-                throw CqrsExceptionsHelper.NotCommandHandler(handlerType, commandResult);
+            if (commandTypeEnum.Equals(CommandTypeEnum.CommandWithResult))
+                throw CqrsExceptionsHelper.NotCommandHandler(handlerType, commandType, commandResultType!);
             throw CqrsExceptionsHelper.NotCommandHandler(handlerType);
         }
-
-        var handlerInterface = CqrsUtils.GetHandlerInterfaceFromCommand(commandType, commandResult);
-
-        if (!handlerInterface.IsAssignableFrom(handlerType))
-            throw CqrsExceptionsHelper.NotCommandHandler(handlerType, commandType);
 
         _commandQueryResolver.CommandHandlers[commandType] = handlerType;
     }
@@ -43,19 +38,15 @@ public sealed class CqrsRegister
 
     public void RegisterQuery(Type queryType, Type handlerType)
     {
-        if (!queryType.IsQuery())
+        if (!queryType.IsQuery(out var queryInterface, out var queryInterfaceDefinition, out var resultType))
             throw CqrsExceptionsHelper.NotQuery(queryType);
 
-        var queryInterface = CqrsUtils.GetQueryInterfaceFromQuery(queryType);
-        var resultType = CqrsUtils.GetResultTypeFromQueryInterface(queryInterface);
-
-        if (!handlerType.IsQueryHandler())
+        if (!handlerType.IsQueryHandler(
+            out var queryHandlerInterface,
+            out var queryHandlerInterfaceDefinition))
+        {
             throw CqrsExceptionsHelper.NotQueryHandler(handlerType, queryType, resultType);
-
-        var handlerInterface = CqrsUtils.GetHandlerInterfaceFromQuery(queryType);
-
-        if (!handlerInterface.IsAssignableFrom(handlerType))
-            throw CqrsExceptionsHelper.NotQueryHandler(handlerType, queryType, resultType);
+        }
 
         _commandQueryResolver.QueryHandlers[queryType] = handlerType;
     }

@@ -53,7 +53,12 @@ public class LocalInstanceProvider : IInstanceProvider
     {
         var type = typeof(T);
 
-        if (!type.IsHandler())
+        if (!type.IsCommandOrQueryHandler(
+            out var handlerEnum,
+            out var handlerInterface,
+            out var handlerInterfaceDefinition))
+        {
             throw new InvalidOperationException($"{type.Name} it's not a command handler nor a query handler.");
+        }
     }
 }

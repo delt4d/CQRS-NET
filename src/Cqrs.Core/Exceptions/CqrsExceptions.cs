@@ -26,6 +26,13 @@ public static class CqrsExceptionsHelper
         return new ArgumentException($"{type.Name} does not implement IQuery<>");
     }
 
+    public static ArgumentException NotQuery(Type type, Type resultType)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(resultType);
+        return new ArgumentException($"{type.Name} does not implement IQuery<{resultType.Name}>");
+    }
+
     public static ArgumentException NotCommandHandler(Type type)
     {
         ArgumentNullException.ThrowIfNull(type);
